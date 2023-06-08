@@ -3,7 +3,6 @@
 * 4/30/23
 * Red Black Tree Insertion
 * https://www.programiz.com/dsa/red-black-tree
-* https://algorithmtutor.com/Data-Structures/Tree/Red-Black-Trees/
 * Links used for reference to help
 */
 

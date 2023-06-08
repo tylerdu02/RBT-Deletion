@@ -360,7 +360,7 @@ void Delete(Node* &root, int value) { // deletes a value
     }
 }
 
-void RBTDelete(Node* current, Node* &root) { // fixes the tree 
+void RBTDelete(Node* current, Node* &root) { // fixes tree 
     while (current != root && color(current) == false) {  
         if (current == getParent(current)->left) { 
             Node* sibling = getSibling(current);

@@ -1,7 +1,7 @@
 /*
 * Tyler Du
-* 5/21/23
-* Red Black Tree Deletetion
+* 4/30/23
+* Red Black Tree Insertion
 * https://www.programiz.com/dsa/red-black-tree
 * https://algorithmtutor.com/Data-Structures/Tree/Red-Black-Trees/
 * Links used for reference to help
@@ -22,9 +22,9 @@ struct Node {
     bool isRed;
     Node(int data) {
         this->data = data;
-        left = NULL;
-        right = NULL;
-        parent = NULL;
+        left = nullptr;
+        right = nullptr;
+        parent = nullptr;
         isRed = true;
     }
 };
@@ -35,19 +35,22 @@ void print(Node* root, int numTabs);
 void leftRotate(Node* current, Node* &root);
 void rightRotate(Node* current, Node* &root);
 void search(Node* root, int value);
+void Delete(Node* &root, int value);
+void RBTDelete(Node* current, Node* &root);
 Node* getParent(Node* current);
 Node* getGrandparent(Node* current);
 Node* getSibling(Node* current);
 Node* getUncle(Node* current);
+Node* find(Node* root, int value);
 bool color(Node* current);
 
 int main() {
     char input[10];
     bool running = true;
-    Node* root = NULL;
+    Node* root = nullptr;
 
     while (running == true) {
-        cout << "Add, print, file, or search?" << endl;
+        cout << "Add, print, file, delete or search?" << endl;
 
         cin.get(input, 10);
         cin.ignore(1, '\n');
@@ -82,6 +85,19 @@ int main() {
             }
             numbers.close();
         }
+        else if (input[0] == 'D' || input[0] == 'd') { // deletes 
+            int deleteNum;
+            cout << "What number would you like to delete?" << endl;
+            cin >> deleteNum;
+            cin.ignore(1, '\n');
+            if (deleteNum >= 1 && deleteNum <= 999) { 
+                Delete(root, deleteNum);
+                cout << deleteNum << " has been deleted" << endl;
+            }
+            else { // if input is not valids
+                cout << "Invalid input. Try again" << endl;
+            }
+        }
         else if (input[0] == 'S' || input[0] == 's') { // searches
             int searchNum;
             cout << "What number would you like to search?" << endl;
@@ -105,8 +121,8 @@ Node* getGrandparent(Node* current) { // returns the grandparent of the node
 
 Node* getSibling(Node* current) { // returns the sibling of the node
     Node* parent = getParent(current);
-    if (parent == NULL) { 
-        return NULL;
+    if (parent == nullptr) { 
+        return nullptr;
     }
     if (current == parent->left) { // left child
         return parent->right;
@@ -119,27 +135,37 @@ Node* getSibling(Node* current) { // returns the sibling of the node
 Node* getUncle(Node* current) { // returns the uncle of the node
     Node* parent = getParent(current);
     Node* grandparent = getGrandparent(current);
-    if (grandparent == NULL) { 
-        return NULL;
+    if (grandparent == nullptr) { 
+        return nullptr;
     }
     return getSibling(parent);
 }
 
 bool color(Node* current) { // gets color (red or black)
-    if (current == NULL) {
+    if (current == nullptr) {
         return false;
     }
     return current->isRed;
 }
 
+Node* find(Node* root, int value) { // finds node
+    if (root == nullptr || root->data == value) { 
+        return root;
+    }
+    if (root->data < value) { 
+        return find(root->right, value);
+    }
+    return find(root->left, value);
+}
+
 void insert(Node* &root, Node* current) { // inserts node 
-    if (root == NULL) { 
+    if (root == nullptr) { 
         root = current;
         root->isRed = false;
     }
     else { 
         if (current->data < root->data) { 
-            if (root->left == NULL) { 
+            if (root->left == nullptr) { 
                 root->left = current;
                 current->parent = root;
             }
@@ -148,7 +174,7 @@ void insert(Node* &root, Node* current) { // inserts node
             }
         }
         else { // if greater
-            if (root->right == NULL) { 
+            if (root->right == nullptr) { 
                 root->right = current;
                 current->parent = root;
             }
@@ -160,7 +186,7 @@ void insert(Node* &root, Node* current) { // inserts node
 }
 
 void RBTInsert(Node* current, Node* &root) { // insertion part
-    if (getParent(current) == NULL) { 
+    if (getParent(current) == nullptr) { 
         current->isRed = false;
     }
     else if (color(getParent(current)) == false) { // black
@@ -200,7 +226,7 @@ void RBTInsert(Node* current, Node* &root) { // insertion part
 }
 
 void print(Node* root, int numTabs) { // prints 
-    if (root == NULL) { 
+    if (root == nullptr) { 
         return;
     }
     numTabs += 10;
@@ -222,7 +248,7 @@ void print(Node* root, int numTabs) { // prints
 }
 
 void search(Node* root, int value) { // searches 
-    if (root == NULL) { 
+    if (root == nullptr) { 
         cout << "Invalid input. Try again." << endl;
         return;
     }
@@ -239,18 +265,19 @@ void search(Node* root, int value) { // searches
         cout << "Invalid input. Try again." << endl;
     }
 }
+
 // https://www.programiz.com/dsa/red-black-tree
 void leftRotate(Node* current, Node* &root) { // rotate
     cout << "Left rotate" << endl;
     Node* currentRight = current->right;
     current->right = currentRight->left;
-    if (currentRight->left != NULL) { 
+    if (currentRight->left != nullptr) { 
         cout << "Node is not null" << endl;
         currentRight->left->parent = current;
     }
     currentRight->left = current;
     currentRight->parent = current->parent;
-    if (current->parent == NULL) { 
+    if (current->parent == nullptr) { 
         root = currentRight;
         cout << "Node is the root" << endl;
     }
@@ -269,13 +296,13 @@ void rightRotate(Node* current, Node* &root) { // rotate
     cout << "Right rotate" << endl;
     Node* currentLeft = current->left;
     current->left = currentLeft->right;
-    if (currentLeft->right != NULL) { 
+    if (currentLeft->right != nullptr) { 
         cout << "Node is not null" << endl;
         currentLeft->right->parent = current;
     }
     currentLeft->right = current;
     currentLeft->parent = current->parent;
-    if (current->parent == NULL) { 
+    if (current->parent == nullptr) { 
         cout << "Node is the root" << endl;
         root = currentLeft;
     }
@@ -288,4 +315,47 @@ void rightRotate(Node* current, Node* &root) { // rotate
         current->parent->right = currentLeft;
     }
     current->parent = currentLeft;
+}
+
+// https://www.programiz.com/dsa/deletion-from-a-red-black-tree
+void Delete(Node* &root, int value) { // deletes a value 
+    Node* node = find(root, value); 
+    Node* deleteNode = nullptr; 
+    Node* childNode = nullptr; 
+    if (node == nullptr) { 
+        return;
+    }
+    if (node->left == nullptr || node->right == nullptr) { // if node has one child
+        deleteNode = node;
+    } 
+    else { // if node has two 
+        deleteNode = node->right;
+        while (deleteNode->left != nullptr) {
+            deleteNode = deleteNode->left;
+        }
+    }
+    if (deleteNode->left != nullptr) { 
+        childNode = deleteNode->left;
+    } 
+    else { 
+        childNode = deleteNode->right;
+    }
+    if (childNode != nullptr) { 
+        childNode->parent = deleteNode->parent;
+    }
+    if (deleteNode->parent == nullptr) { 
+        root = childNode;
+    }
+    else if (deleteNode == deleteNode->parent->left) { 
+        deleteNode->parent->left = childNode;
+    }
+    else { 
+        deleteNode->parent->right = childNode;
+    }
+    if (deleteNode != node) { 
+        node->data = deleteNode->data;
+    }
+    if (deleteNode->isRed == false && childNode != nullptr) { 
+        RBTDelete(childNode, root);
+    }
 }

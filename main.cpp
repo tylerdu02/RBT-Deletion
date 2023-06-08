@@ -1,7 +1,7 @@
 /*
 * Tyler Du
 * 5/21/23
-* Red Black Tree Deletion
+* Red Black Tree Deletetion
 * https://www.programiz.com/dsa/red-black-tree
 * https://algorithmtutor.com/Data-Structures/Tree/Red-Black-Trees/
 * Links used for reference to help

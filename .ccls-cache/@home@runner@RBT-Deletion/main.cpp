@@ -141,13 +141,6 @@ Node* getUncle(Node* current) { // returns the uncle of the node
     return getSibling(parent);
 }
 
-bool color(Node* current) { // gets color (red or black)
-    if (current == nullptr) {
-        return false;
-    }
-    return current->isRed;
-}
-
 Node* find(Node* root, int value) { // finds node
     if (root == nullptr || root->data == value) { 
         return root;
@@ -156,6 +149,13 @@ Node* find(Node* root, int value) { // finds node
         return find(root->right, value);
     }
     return find(root->left, value);
+}
+
+bool color(Node* current) { // gets color (red or black)
+    if (current == nullptr) {
+        return false;
+    }
+    return current->isRed;
 }
 
 void insert(Node* &root, Node* current) { // inserts node 
@@ -357,5 +357,65 @@ void Delete(Node* &root, int value) { // deletes a value
     }
     if (deleteNode->isRed == false && childNode != nullptr) { 
         RBTDelete(childNode, root);
+    }
+}
+
+void RBTDelete(Node* current, Node* &root) { // fixes the tree 
+    while (current != root && color(current) == false) {  
+        if (current == getParent(current)->left) { 
+            Node* sibling = getSibling(current);
+            if (color(sibling) == true) { 
+                sibling->isRed = false;
+                getParent(current)->isRed = true;
+                leftRotate(getParent(current), root);
+                sibling = getParent(current)->right;
+            }
+            if (color(sibling->left) == false && color(sibling->right) == false) { 
+                sibling->isRed = true;
+                current = getParent(current);
+            } 
+            else { 
+                if (color(sibling->right) == false) { 
+                    sibling->left->isRed = false;
+                    sibling->isRed = true;
+                    rightRotate(sibling, root);
+                    sibling = getParent(current)->right;
+                }
+                sibling->isRed = color(getParent(current));
+                getParent(current)->isRed = false;
+                sibling->right->isRed = false;
+                leftRotate(getParent(current), root);
+                current = root;
+            }
+        } 
+        else { 
+            Node* sibling = getSibling(current);
+            if (color(sibling) == true) {
+                sibling->isRed = false;
+                getParent(current)->isRed = true;
+                rightRotate(getParent(current), root);
+                sibling = getParent(current)->left;
+            }
+            if (color(sibling->right) == false && color(sibling->left) == false) { 
+                sibling->isRed = true;
+                current = getParent(current);
+            }
+            else { 
+                if (color(sibling->left) == false) { 
+                    sibling->right->isRed = false;
+                    sibling->isRed = true;
+                    leftRotate(sibling, root);
+                    sibling = getParent(current)->left;
+                }
+                sibling->isRed = color(getParent(current));
+                getParent(current)->isRed = false;
+                sibling->left->isRed = false;
+                rightRotate(getParent(current), root);
+                current = root;
+            }
+        }
+    }
+    if (current != nullptr) { // if node is not null
+        current->isRed = false;
     }
 }
